@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['ped']
+
+roboflow:
+  workspace: pova-nzp1p
+  project: citypersons-woqjq-dmg1p
+  version: 1
+  license: CC BY 4.0
+  url: https://app.roboflow.com/pova-nzp1p/citypersons-woqjq-dmg1p/1
