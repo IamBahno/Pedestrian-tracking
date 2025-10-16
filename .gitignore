@@ -3,3 +3,5 @@ train/
 valid/
 runs/
 *.pt
+*.zip
+jobs_info.txt
