@@ -2,16 +2,15 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 from bytetrack import ByteTrack
+from deepsort import DeepSORT
 import argparse
-from pathlib import Path
 import time
 import os
 
 class PedestrianTracker:
-    
-    # Kompletny system na sledovanie chodcov pomocou YOLO + ByteTrack
     def __init__(self, 
                  model_path="best.pt",
+                 tracker_type="bytetrack",
                  track_thresh=0.5,
                  high_thresh=0.6,
                  match_thresh=0.8,
@@ -19,15 +18,15 @@ class PedestrianTracker:
                  iou_thresh=0.45,
                  imgsz=320):
         
-        # Inicializacia trackeru chodcov
         print(f"Loading YOLO model from {model_path}")
         self.yolo_model = YOLO(model_path)
+        self.tracker_type = tracker_type.lower()
+        print(f"Using tracker: {self.tracker_type}")
         
-        self.tracker = ByteTrack(
-            track_thresh=track_thresh,
-            high_thresh=high_thresh,
-            match_thresh=match_thresh
-        )
+        if self.tracker_type == "deepsort":
+            self.tracker = DeepSORT(track_thresh=track_thresh, match_thresh=match_thresh)
+        else:
+            self.tracker = ByteTrack(track_thresh=track_thresh, high_thresh=high_thresh, match_thresh=match_thresh)
         
         self.conf_thresh = conf_thresh
         self.iou_thresh = iou_thresh
@@ -42,20 +41,15 @@ class PedestrianTracker:
         self.current_fps = 0.0
         self.last_fps_update = time.time()
         
+    # === DETEKCE ===
+    
     def detect_pedestrians(self, frame):
-        """
-        Detekuje chodcov vo frame pomocou YOLO
-        
-        Args:
-            frame: Vstupny frame (BGR)
-            
-        Returns:
-            Zoznam detekcii vo formate [x, y, w, h, confidence, class_id]
-        """
         results = self.yolo_model(frame, 
                                 conf=self.conf_thresh,
                                 iou=self.iou_thresh,
                                 imgsz=320,
+                                device='cpu',
+                                half=False,
                                 verbose=False)
         
         detections = []
@@ -78,29 +72,14 @@ class PedestrianTracker:
         
         return detections
     
-    def track_pedestrians(self, detections):
-        """
-        Sleduje chodcov pomocou ByteTrack
-        
-        Args:
-            detections: Zoznam detekcii z YOLO
-            
-        Returns:
-            Zoznam aktivnych trackov
-        """
-        return self.tracker.update(detections)
+    # === TRACKOVANIE ===
+    
+    def track_pedestrians(self, detections, frame=None):
+        return self.tracker.update(detections, frame)
+    
+    # === SPRACOVANIE FRAMU ===
     
     def process_frame(self, frame):
-        """
-        Spracuje jeden frame: detekuje a sleduje chodcov
-        
-        Args:
-            frame: Vstupny frame (BGR)
-            
-        Returns:
-            frame: Anotovany frame s vysledkami sledovania
-            tracks: Zoznam aktivnych trackov
-        """
         current_time = time.time()
         self.frame_count += 1
         self.fps_frame_count += 1
@@ -116,7 +95,10 @@ class PedestrianTracker:
         
         detections = self.detect_pedestrians(resized_frame)
         
-        tracks = self.track_pedestrians(detections)
+        if self.tracker_type == "deepsort":
+            tracks = self.track_pedestrians(detections, resized_frame)
+        else:
+            tracks = self.track_pedestrians(detections)
         
         self.active_tracks = len(tracks)
         self.total_tracks = max(self.total_tracks, self.tracker.next_id - 1)
@@ -126,16 +108,7 @@ class PedestrianTracker:
         return annotated_frame, tracks
     
     def draw_tracks(self, frame, tracks):
-        """
-        Kresli vysledky sledovania na frame
-        
-        Args:
-            frame: Vstupny frame
-            tracks: Zoznam aktivnych trackov
-            
-        Returns:
-            Anotovany frame
-        """
+        # Nakresli obdlzniky a ID na frame
         annotated_frame = frame.copy()
         
         for track in tracks:
@@ -162,9 +135,13 @@ class PedestrianTracker:
                        (x, y - 5), 
                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
         
-        info_text = f"Frame: {self.frame_count} | FPS: {self.current_fps:.1f} | Active Tracks: {self.active_tracks} | Total Tracks: {self.total_tracks}"
+        info_text = f"Frame: {self.frame_count} | FPS: {self.current_fps:.1f} | Active: {self.active_tracks} | Track: {self.total_tracks}"
         cv2.putText(annotated_frame, info_text, (10, 30), 
                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        
+        tracker_text = f"Tracker: {self.tracker_type.upper()}"
+        cv2.putText(annotated_frame, tracker_text, (10, 60), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
         
         fps_text = f"FPS: {self.current_fps:.1f}"
         fps_size = cv2.getTextSize(fps_text, cv2.FONT_HERSHEY_SIMPLEX, 0.8, 2)[0]
@@ -175,32 +152,16 @@ class PedestrianTracker:
         return annotated_frame
     
     def get_track_color(self, track_id):
-        # Generuje konzistentnu farbu pre track ID
         colors = [
-            (255, 0, 0),    # Cervena
-            (0, 255, 0),    # Zelena
-            (0, 0, 255),    # Modra
-            (255, 255, 0),  # Zlta
-            (255, 0, 255),  # Magenta
-            (0, 255, 255),  # Cyan
-            (255, 128, 0),  # Oranzova
-            (128, 0, 255),  # Fialova
-            (255, 192, 203), # Ruzova
-            (0, 128, 0),    # Tmavo zelena
-            (128, 128, 0),  # Olivova
-            (0, 0, 128),    # Tmavo modra
+            (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0),
+            (255, 0, 255), (0, 255, 255), (255, 128, 0), (128, 0, 255),
+            (255, 192, 203), (0, 128, 0), (128, 128, 0), (0, 0, 128)
         ]
         return colors[track_id % len(colors)]
     
+    # === SPRACOVANIE VIDEA ===
+    
     def process_video(self, input_path, output_path=None, display=True):
-        """
-        Spracuje video subor pre sledovanie chodcov
-        
-        Args:
-            input_path: Cesta k vstupnemu videu
-            output_path: Cesta k vystupnemu videu (volitelne)
-            display: Ci zobrazit video pocas spracovania
-        """
         cap = cv2.VideoCapture(input_path)
         if not cap.isOpened():
             raise ValueError(f"Could not open video: {input_path}")
@@ -264,14 +225,17 @@ class PedestrianTracker:
     
 
 def main():
-    parser = argparse.ArgumentParser(description='Pedestrian Tracking with YOLO + ByteTrack - Video Processing Only')
+    parser = argparse.ArgumentParser(description='Pedestrian Tracking with YOLO + ByteTrack/DeepSORT - Video Processing Only')
     parser.add_argument('--input', type=str, required=True, help='Input video path')
     parser.add_argument('--output', type=str, help='Output video path (optional)')
     parser.add_argument('--model', type=str, default='best.pt', help='YOLO model path (best.pt or last.pt)')
     parser.add_argument('--no-display', action='store_true', help='Disable video display')
     
+    parser.add_argument('--tracker', type=str, default='bytetrack', 
+                       choices=['bytetrack', 'deepsort'],
+                       help='Tracking algorithm: bytetrack (default) or deepsort')
     parser.add_argument('--track-thresh', type=float, default=0.5, help='Track confidence threshold')
-    parser.add_argument('--high-thresh', type=float, default=0.6, help='High confidence threshold')
+    parser.add_argument('--high-thresh', type=float, default=0.6, help='High confidence threshold (ByteTrack only)')
     parser.add_argument('--match-thresh', type=float, default=0.8, help='IoU match threshold')
     parser.add_argument('--conf-thresh', type=float, default=0.25, help='YOLO confidence threshold')
     parser.add_argument('--iou-thresh', type=float, default=0.45, help='YOLO IoU threshold')
@@ -285,6 +249,7 @@ def main():
     
     tracker = PedestrianTracker(
         model_path=args.model,
+        tracker_type=args.tracker,
         track_thresh=args.track_thresh,
         high_thresh=args.high_thresh,
         match_thresh=args.match_thresh,

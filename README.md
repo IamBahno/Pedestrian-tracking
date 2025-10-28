@@ -9,12 +9,20 @@ data a modely jsou v: https://drive.google.com/drive/folders/1zfFXMRVMnHY0xS7eI3
 
 ### Základné spustenie videa:
 ```bash
-python3 track.py --input video.mp4 --model best.pt
+python3 pedestrian_tracker.py --input video.mp4 --model best.pt
+```
+
+### Použitie
+```bash
+# ByteTrack (predvolené - rýchlejší, viac trackov)
+python3 pedestrian_tracker.py --input video.mp4 --tracker bytetrack/deepsort
+
 ```
 
 ### Parametre:
-- `--conf-thresh 0.x` - citlivosť detekcie (vyššie = menej detekcií, rýchlejšie)
+- `--tracker` - výber algoritmu: `bytetrack` alebo `deepsort`
+- `--conf-thresh 0.x` - citlivosť detekcie
 
 ### Ovládanie:
 - **Q** - ukončiť
-- **P** - pauza/pokračovať
+

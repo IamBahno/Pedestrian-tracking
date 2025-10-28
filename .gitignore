@@ -2,6 +2,8 @@ test/
 train/
 valid/
 runs/
+__pycache__/
 *.pt
 *.zip
 jobs_info.txt
+__pycache__/
