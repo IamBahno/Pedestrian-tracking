@@ -1,3 +1,12 @@
+"""
+DeepSORT Tracker Implementacia
+
+Zalozeny na: Simple Online and Realtime Tracking with a Deep Association Metric (DeepSORT)
+Paper: https://arxiv.org/abs/1703.07402
+Originalna implementacia: https://github.com/nwojke/deep_sort
+
+"""
+
 import numpy as np
 from collections import OrderedDict
 from scipy.optimize import linear_sum_assignment

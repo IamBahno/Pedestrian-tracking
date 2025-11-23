@@ -1,3 +1,16 @@
+"""
+ReID (Re-Identification) Model pre DeepSORT
+
+Tento modul implementuje jednoduchy CNN-based ReID model pre extrahovanie appearance
+features z pedestrian bounding boxov. Tieto features su pouzivane DeepSORT
+pre appearance-based asociaciu.
+
+Referencie:
+- DeepSORT paper: https://arxiv.org/abs/1703.07402
+- Originalny DeepSORT pouziva pre-trained ReID model
+- Toto je zjednodusena implementacia pre demonstraciu
+"""
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

@@ -17,7 +17,7 @@ for split in splits:
         lines = label_file.read_text().strip().splitlines()
         count_total += len(lines)
 
-        # Keep only lines starting with '2' and change it to '0'
+        # Keep only lines starting with '2' (pedestrian labels) and change it to '0' (we dont care about other labels)
         filtered = []
         for line in lines:
             parts = line.strip().split()

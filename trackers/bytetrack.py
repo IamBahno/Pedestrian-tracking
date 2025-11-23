@@ -1,3 +1,12 @@
+"""
+ByteTrack Tracker Implementacia
+
+Zalozeny na: ByteTrack: Multi-Object Tracking by Associating Every Detection Box
+Paper: https://arxiv.org/abs/2110.06864
+Originalna implementacia: https://github.com/ifzhang/ByteTrack
+
+"""
+
 import numpy as np
 from collections import OrderedDict
 from scipy.optimize import linear_sum_assignment

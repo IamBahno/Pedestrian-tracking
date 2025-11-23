@@ -1,9 +1,6 @@
-test/
-train/
-valid/
+datasets/
 runs/
-__pycache__/
+*pyc
 *.pt
 *.zip
 jobs_info.txt
-__pycache__/

@@ -7,6 +7,11 @@ data a modely jsou v: https://drive.google.com/drive/folders/1zfFXMRVMnHY0xS7eI3
 
 ## Spustenie trackovania:
 
+### priklad spustenia v tomto repozitári.
+```bash
+python3 pedestrian_tracker.py --input .\input\video.mp4 --model .\models\1\best.pt --tracker deepsort
+```
+
 ### Základné spustenie videa:
 ```bash
 python3 pedestrian_tracker.py --input video.mp4 --model best.pt

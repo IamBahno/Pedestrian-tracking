@@ -1,5 +1,12 @@
+"""
+Pedestrian Tracker - Hlavne Tracking Rozhranie
+
+Tento modul poskytuje jednotne rozhranie pre pedestrian tracking pouzivajuci YOLO
+detekcne modely kombinovane s viacerymi tracking algoritmami.
+
+"""
+
 import cv2
-import numpy as np
 from ultralytics import YOLO
 from bytetrack import ByteTrack
 from deepsort import DeepSORT
