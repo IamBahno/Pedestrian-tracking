@@ -4,3 +4,6 @@ runs/
 *.pt
 *.zip
 jobs_info.txt
+output/
+
+models/
