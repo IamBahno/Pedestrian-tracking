@@ -3,5 +3,3 @@ runs/
 *pyc
 *.pt
 *.zip
-models/
-output/

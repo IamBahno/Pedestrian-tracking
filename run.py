@@ -7,9 +7,7 @@
 #
 #        6 tracking windows (3 models × 2 trackers)
 #
-#        3 statistics panels (agreement heatmaps, timelines, performance metrics)
-#
-#    Parallel Processing: Uses threading for efficient multi-tracker processing
+#        3 statistics panels
 #
 #    Outputs: Saves graphs and comparison videos
 
@@ -70,7 +68,7 @@ if __name__ == "__main__":
     # Setup datasets for testing
     if setup_datasets_for_testing():
         from testing import test_model_on_datasets, create_comparison_video
-        #test_results = test_model_on_datasets() # Test models and generate graphs
+        test_results = test_model_on_datasets() # Test models and generate graphs
         
         # Only create video if test video exists
         if os.path.exists("input/video.mp4"):

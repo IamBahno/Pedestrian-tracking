@@ -215,7 +215,7 @@ def create_summary_table(results, valid_models):
 
 
 def create_comparison_video():
-    """Create 3x3 comparison video with all models and trackers - 4K RESOLUTION"""
+    """Create 3x3 comparison video with all models and trackers"""
     print("🎥 Creating comparison video...")
     
     models = {
@@ -227,7 +227,7 @@ def create_comparison_video():
     trackers = ["bytetrack", "deepsort"]
     
     test_video = "input/video.mp4"
-    output_video = "output/comparison_grid_4k.mp4"
+    output_video = "output/comparison_grid.mp4"
     
     if not os.path.exists(test_video):
         print(f"❌ Test video {test_video} not found!")
@@ -270,7 +270,7 @@ def create_comparison_video():
     OUTPUT_WIDTH = 3840
     OUTPUT_HEIGHT = 2160
     
-    # Calculate cell dimensions for 4K
+
     cell_width = OUTPUT_WIDTH // GRID_COLS
     cell_height = OUTPUT_HEIGHT // GRID_ROWS
     
@@ -281,7 +281,7 @@ def create_comparison_video():
     out = cv2.VideoWriter(output_video, fourcc, fps, (OUTPUT_WIDTH, OUTPUT_HEIGHT))
     
     frame_count = 0
-    max_frames = 100
+    max_frames = 10000
     
     # Statistics collection with separate max tracking
     stats = {
@@ -387,14 +387,14 @@ def create_comparison_video():
         overall_fps = frame_count / total_time if total_time > 0 else 0
         final_avg_detections = np.mean(stats['all_detections_history']) if stats['all_detections_history'] else 0
         
-        print(f"✅ 4K Comparison video saved to {output_video}")
+        print(f"✅ Comparison video saved to {output_video}")
         print(f"📊 Final statistics: {frame_count} frames processed")
         print(f"📊 Overall FPS: {overall_fps:.1f}")
         print(f"📈 Average detections: {final_avg_detections:.1f}")
         print(f"📈 System maximum detections: {stats['system_max']}")
 
 def create_grid_frame_fixed_layout(frames_processed, stats, frame_count, cell_width, cell_height, grid_rows, grid_cols, models, trackers):
-    """Create grid with MODELS BY COLUMN, TRACKERS BY ROWS layout - 4K VERSION"""
+    """Create grid with MODELS BY COLUMN, TRACKERS BY ROWS layout"""
     grid = np.zeros((grid_rows * cell_height, grid_cols * cell_width, 3), dtype=np.uint8)
     
     # Layout: Models by column, Trackers by rows
@@ -426,7 +426,7 @@ def create_grid_frame_fixed_layout(frames_processed, stats, frame_count, cell_wi
                 
                 # Add label - BOTTOM RIGHT CORNER (ONLY LABEL, NO DETECTION COUNT)
                 label = f"{model_name} - {tracker_type}"
-                text_scale = 1.2  # Larger for 4K
+                text_scale = 1.2
                 text_thickness = 3
                 text_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, text_scale, text_thickness)[0]
                 
