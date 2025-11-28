@@ -23,7 +23,7 @@ try:
 
     # Process splits (tiny box removal enabled)
     print("Processing WiderPerson splits...")
-    for split in ["train", "val"]:
+    for split in ["train", "valid"]:
         stats = process_split(split, UNZIPPED_DIR, OUT_DIR, dataset_type="widerperson", remove_tiny=True)
         print(f"{split} stats: {stats}")
 

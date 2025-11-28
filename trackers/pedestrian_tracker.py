@@ -8,11 +8,13 @@ detekcne modely kombinovane s viacerymi tracking algoritmami.
 
 import cv2
 from ultralytics import YOLO
-from bytetrack import ByteTrack
-from deepsort import DeepSORT
 import argparse
 import time
 import os
+
+from trackers.bytetrack import ByteTrack
+from trackers.deepsort import DeepSORT
+
 
 class PedestrianTracker:
     def __init__(self, 

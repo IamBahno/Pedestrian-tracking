@@ -3,7 +3,5 @@ runs/
 *pyc
 *.pt
 *.zip
-jobs_info.txt
-output/
-
 models/
+output/

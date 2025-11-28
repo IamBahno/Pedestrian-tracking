@@ -11,7 +11,7 @@ import numpy as np
 from collections import OrderedDict
 from scipy.optimize import linear_sum_assignment
 import cv2
-from tracker_base import TrackerUtils
+from trackers.tracker_base import TrackerUtils
 
 class ByteTrack:    
     def __init__(self, 

@@ -154,19 +154,42 @@ def create_combined_dataset():
             shutil.copytree(src + "/images", f"{combined}/{split}/images", dirs_exist_ok=True)
             shutil.copytree(src + "/labels", f"{combined}/{split}/labels", dirs_exist_ok=True)
 
-    yaml_data = {
-        "nc": 1,
-        "names": ["pedestrian"],
-        "train": "train/images",
-        "val": "valid/images",
-        "test": "test/images"
-    }
+    from dataset_convertors.dataset_utils import create_data_yaml
+    create_data_yaml(combined)
 
-    with open(f"{combined}/data.yaml", "w") as f:
-        yaml.dump(yaml_data, f)
+
+    #yaml_data = {
+    #    "nc": 1,
+    #    "names": ["pedestrian"],
+    #    "train": "train/images",
+    #    "val": "valid/images",
+    #    "test": "test/images"
+    #}
+    #
+    #with open(f"{combined}/data.yaml", "w") as f:
+    #    yaml.dump(yaml_data, f)
 
     print("✅ Combined dataset created")
     return f"{combined}/data.yaml"
+
+def create_data_yaml(out_dir, nc=1, names=None):
+    if names is None:
+        names = ["pedestrian"]
+
+    yaml_path = Path(out_dir) / "data.yaml"
+    data_yaml = {
+        "path": str(Path(out_dir).resolve()),
+        "train": "train/images",
+        "val": "valid/images",
+        "test": "test/images",
+        "names": names,
+        "nc": nc
+    }
+
+    with open(yaml_path, "w") as f:
+        yaml.dump(data_yaml, f, default_flow_style=False)
+    print(f"YAML created: {yaml_path}")
+
 
 
 # ================================================================
@@ -254,6 +277,44 @@ def ensure_models_exist():
                 continue
                 
             train_model("combined", model_path)
+
+
+
+
+def setup_datasets_for_testing():
+    """Set up datasets specifically for testing purposes"""
+    file_ids = {
+        "dataset1": "1mWtr01Ab7LuVWAZReEh1fXAuRBWufZCf",
+        "dataset2": "1I7OjhaomWqd8Quf7o5suwLloRlY0THbp",
+    }
+    
+    SCRIPT_DIR = Path(__file__).resolve().parent
+    processor_scripts = {
+        "dataset1": SCRIPT_DIR / "dataset_convertors" / "citypersons_label_filter.py",
+        "dataset2": SCRIPT_DIR / "dataset_convertors" / "widerperson_to_yolo.py"
+    }
+
+    print("\n==============================")
+    print("  SETTING UP DATASETS FOR TESTING")
+    print("==============================")
+
+    # Setup dataset1
+    zip_file1 = "Citypersons.v1i.yolov8.zip"
+    processor1 = processor_scripts["dataset1"]
+    if not setup_dataset(zip_file1, file_ids["dataset1"], processor1, processed_folder="Citypersons_yolo"):
+        print("❌ Cannot setup dataset 1 for testing")
+        return False
+
+    # Setup dataset2  
+    zip_file2 = "WiderPerson.zip"
+    processor2 = processor_scripts["dataset2"]
+    if not setup_dataset(zip_file2, file_ids["dataset2"], processor2, processed_folder="widerperson_yolo"):
+        print("❌ Cannot setup dataset 2 for testing")
+        return False
+
+    print("✅ All datasets ready for testing!")
+    return True
+
 
 
 # ================================================================

@@ -1,11 +1,6 @@
-# main.py
-
 #Key Features Implemented:
-#
 #    Model Management: Automatically downloads or trains all three models
-#
 #    Dataset Handling: Supports two datasets with automatic setup
-#
 #    Testing & Evaluation: Tests all models on both datasets and generates comparison graphs
 #
 #    3x3 Video Grid: Creates a comprehensive comparison video with:
@@ -16,19 +11,7 @@
 #
 #    Parallel Processing: Uses threading for efficient multi-tracker processing
 #
-#    Comprehensive Outputs: Saves graphs and comparison videos
-#
-#To Complete the Setup:
-#
-#    Replace Google Drive IDs: Update the placeholder Google Drive IDs with actual ones for:
-#
-#        Dataset 2
-#
-#        Model files (best_1.pt, best_2.pt)
-#
-#    Add Test Video: Place a test video file at input/video.mp4
-#
-#    Configure Dataset 2: Ensure dataset 2 has the proper YOLO format structure
+#    Outputs: Saves graphs and comparison videos
 
 
 import subprocess
@@ -81,14 +64,24 @@ if __name__ == "__main__":
         print("⚠️  Some requirements failed to install, continuing...")
     
     # Ensure all models exist
-    from model_setup import ensure_models_exist
+    from model_setup import ensure_models_exist, setup_datasets_for_testing
     ensure_models_exist()
     
-    from testing import test_model_on_datasets, create_comparison_video
-    test_results = test_model_on_datasets() # Test models and generate graphs
-    create_comparison_video()
+    # Setup datasets for testing
+    if setup_datasets_for_testing():
+        from testing import test_model_on_datasets, create_comparison_video
+        #test_results = test_model_on_datasets() # Test models and generate graphs
+        
+        # Only create video if test video exists
+        if os.path.exists("input/video.mp4"):
+            create_comparison_video()
+        else:
+            print("⚠️  Test video not found at input/video.mp4 - skipping video creation")
+    else:
+        print("❌ Could not setup datasets for testing")
     
     print("✅ All tasks completed!")
     print("📁 Outputs available in:")
     print("   - output/graphs/model_comparison.png")
-    print("   - output/comparison_grid.mp4")
+    if os.path.exists("output/comparison_grid.mp4"):
+        print("   - output/comparison_grid.mp4")

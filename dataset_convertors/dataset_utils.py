@@ -69,6 +69,9 @@ def process_split(split, src_dir, out_dir, dataset_type="widerperson", remove_ti
         images_dir = src_dir / "Images"
         ann_dir = src_dir / "Annotations"
 
+        if split == "valid":
+            split = "val" # WiderPerson has val.txt instead of valid
+
         split_file = src_dir / f"{split}.txt"
         if not split_file.exists():
             print(f"No {split}.txt found, skipping {split}.")
@@ -224,7 +227,7 @@ def create_data_yaml(out_dir, nc=1, names=None):
     data_yaml = {
         "path": str(Path(out_dir).resolve()),
         "train": "train/images",
-        "val": "val/images",
+        "val": "valid/images",
         "test": "test/images",
         "names": names,
         "nc": nc
