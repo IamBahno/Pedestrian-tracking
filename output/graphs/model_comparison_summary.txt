@@ -1,0 +1,43 @@
+Model Comparison Summary
+==================================================
+Generated: 2025-11-30 02:41:02
+
+Model 1:
+--------------------
+  dataset1:
+    mAP50: 0.645
+    mAP: 0.402
+    Precision: 0.813
+    Recall: 0.555
+  dataset2:
+    mAP50: 0.303
+    mAP: 0.157
+    Precision: 0.525
+    Recall: 0.271
+
+Model 2:
+--------------------
+  dataset1:
+    mAP50: 0.472
+    mAP: 0.289
+    Precision: 0.753
+    Recall: 0.392
+  dataset2:
+    mAP50: 0.753
+    mAP: 0.476
+    Precision: 0.782
+    Recall: 0.657
+
+Model 3:
+--------------------
+  dataset1:
+    mAP50: 0.612
+    mAP: 0.388
+    Precision: 0.798
+    Recall: 0.522
+  dataset2:
+    mAP50: 0.763
+    mAP: 0.481
+    Precision: 0.784
+    Recall: 0.667
+

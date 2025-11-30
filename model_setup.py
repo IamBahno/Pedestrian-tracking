@@ -94,12 +94,12 @@ def train_model(dataset_type, model_save_path):
 
     print(f"\n🎯 Training model on: {dataset_type}")
 
-    epochs = 1
+    epochs = 60
 
     if dataset_type == "dataset1":
         data_config = "datasets/Citypersons_yolo/data.yaml"
     elif dataset_type == "dataset2":
-        data_config = "datasets/widerperson_yolo/data.yaml"
+        data_config = "datasets/WiderPerson_yolo/data.yaml"
     else:
         data_config = create_combined_dataset()
 
@@ -109,9 +109,9 @@ def train_model(dataset_type, model_save_path):
         data=data_config,
         epochs=epochs,
         imgsz=640,
-        batch=1,
+        batch=64,
         device=0,
-        workers=1,
+        workers=3,
         save=True,
         project="models",
         name=f"{dataset_type}",
@@ -128,7 +128,7 @@ def train_model(dataset_type, model_save_path):
 # ================================================================
 
 def create_combined_dataset():
-    """Merge CityPersons_yolo + widerperson_yolo into one dataset"""
+    """Merge CityPersons_yolo + WiderPerson_yolo into one dataset"""
     combined = "datasets/combined"
 
     if os.path.exists(combined):
@@ -149,7 +149,7 @@ def create_combined_dataset():
 
     # Merge: WiderPerson
     for split in ["train", "valid", "test"]:
-        src = f"datasets/widerperson_yolo/{split}"
+        src = f"datasets/WiderPerson_yolo/{split}"
         if os.path.exists(src):
             shutil.copytree(src + "/images", f"{combined}/{split}/images", dirs_exist_ok=True)
             shutil.copytree(src + "/labels", f"{combined}/{split}/labels", dirs_exist_ok=True)
@@ -257,7 +257,7 @@ def ensure_models_exist():
         elif model_number == "2":
             zip_file = "WiderPerson.zip" 
             processor = processor_scripts["dataset2"]
-            if not setup_dataset(zip_file, file_ids["dataset2"], processor, processed_folder="widerperson_yolo"):
+            if not setup_dataset(zip_file, file_ids["dataset2"], processor, processed_folder="WiderPerson_yolo"):
                 print("❌ Cannot setup dataset 2 for training")
                 continue
             train_model("dataset2", model_path)
@@ -272,7 +272,7 @@ def ensure_models_exist():
                 
             zip_file2 = "WiderPerson.zip"
             processor2 = processor_scripts["dataset2"] 
-            if not setup_dataset(zip_file2, file_ids["dataset2"], processor2, processed_folder="widerperson_yolo"):
+            if not setup_dataset(zip_file2, file_ids["dataset2"], processor2, processed_folder="WiderPerson_yolo"):
                 print("❌ Cannot setup dataset 2 for combined training")
                 continue
                 
@@ -308,7 +308,7 @@ def setup_datasets_for_testing():
     # Setup dataset2  
     zip_file2 = "WiderPerson.zip"
     processor2 = processor_scripts["dataset2"]
-    if not setup_dataset(zip_file2, file_ids["dataset2"], processor2, processed_folder="widerperson_yolo"):
+    if not setup_dataset(zip_file2, file_ids["dataset2"], processor2, processed_folder="WiderPerson_yolo"):
         print("❌ Cannot setup dataset 2 for testing")
         return False
 

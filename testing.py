@@ -33,7 +33,7 @@ def test_model_on_datasets():
         # Test on both datasets
         datasets = {
             "dataset1": "datasets/Citypersons_yolo/data.yaml",
-            "dataset2": "datasets/widerperson_yolo/data.yaml"
+            "dataset2": "datasets/WiderPerson_yolo/data.yaml"
         }
         
         for dataset_name, data_config in datasets.items():
