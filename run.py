@@ -4,12 +4,10 @@
 #    Testing & Evaluation: Tests all models on both datasets and generates comparison graphs
 #
 #    3x3 Video Grid: Creates a comprehensive comparison video with:
-#
 #        6 tracking windows (3 models × 2 trackers)
-#
 #        3 statistics panels
 #
-#    Outputs: Saves graphs and comparison videos
+#    Outputs: Saves graphs and comparison video
 
 
 import subprocess
@@ -79,7 +77,4 @@ if __name__ == "__main__":
         print("❌ Could not setup datasets for testing")
     
     print("✅ All tasks completed!")
-    print("📁 Outputs available in:")
-    print("   - output/graphs/model_comparison.png")
-    if os.path.exists("output/comparison_grid.mp4"):
-        print("   - output/comparison_grid.mp4")
+    print("📁 Outputs available in: output/")

@@ -52,8 +52,8 @@ def test_model_on_datasets():
                 results[model_name][dataset_name] = {
                     'map50': metrics.box.map50,  # mAP@0.5
                     'map': metrics.box.map,      # mAP@0.5:0.95
-                    'precision': metrics.box.p[0] if hasattr(metrics.box, 'p') and len(metrics.box.p) > 0 else 0.5,  # Use 'p' for precision
-                    'recall': metrics.box.r[0] if hasattr(metrics.box, 'r') and len(metrics.box.r) > 0 else 0.5     # Use 'r' for recall
+                    'precision': metrics.box.p[0] if hasattr(metrics.box, 'p') and len(metrics.box.p) > 0 else 0.5,
+                    'recall': metrics.box.r[0] if hasattr(metrics.box, 'r') and len(metrics.box.r) > 0 else 0.5
                 }
                 print(f"✅ {model_name} on {dataset_name}: mAP50 = {metrics.box.map50:.3f}")
             except Exception as e:
@@ -170,8 +170,6 @@ def generate_comparison_graphs(results):
 
     print("✅ Comparison graphs generated!")
 
-    print("✅ Comparison graphs generated!")
-
 
 
 def create_summary_table(results, valid_models):
@@ -216,7 +214,7 @@ def create_summary_table(results, valid_models):
 
 def create_comparison_video():
     """Create 3x3 comparison video with all models and trackers"""
-    print("🎥 Creating comparison video...")
+    print("\n🎥 Creating comparison video...")
     
     models = {
         "Model 1": "models/dataset1/weights/best.pt",
@@ -291,7 +289,7 @@ def create_comparison_video():
         'tracker_counts': {},
         'model_max': 0.0,  # Separate max for model comparison
         'tracker_max': 0.0,  # Separate max for tracker comparison
-        'system_max': 0,  # Max for system performance (always >= current)
+        'system_max': 0,  # Max for system performance
         'all_detections_history': [],  # Store all detections for average
         'start_time': datetime.now()
     }
@@ -362,7 +360,7 @@ def create_comparison_video():
             if frame_count % 10 == 0:
                 recent_fps = stats['fps_data'][-10:] if len(stats['fps_data']) >= 10 else stats['fps_data']
                 avg_fps = np.mean(recent_fps) if recent_fps else 0
-                current_avg_detections = np.mean(stats['all_detections_history'][-20:]) if stats['all_detections_history'] else 0
+                current_avg_detections = np.mean(stats['all_detections_history'][-int(fps):]) if stats['all_detections_history'] else 0
                 print(f"📊 Frame {frame_count}: Current FPS: {current_fps:.1f}, Avg FPS: {avg_fps:.1f}")
                 print(f"📈 Current avg detections: {current_avg_detections:.1f}, System max: {stats['system_max']}")
             

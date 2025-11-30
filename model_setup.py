@@ -157,18 +157,6 @@ def create_combined_dataset():
     from dataset_convertors.dataset_utils import create_data_yaml
     create_data_yaml(combined)
 
-
-    #yaml_data = {
-    #    "nc": 1,
-    #    "names": ["pedestrian"],
-    #    "train": "train/images",
-    #    "val": "valid/images",
-    #    "test": "test/images"
-    #}
-    #
-    #with open(f"{combined}/data.yaml", "w") as f:
-    #    yaml.dump(yaml_data, f)
-
     print("✅ Combined dataset created")
     return f"{combined}/data.yaml"
 
@@ -203,9 +191,9 @@ def ensure_models_exist():
     file_ids = {
         "dataset1": "1mWtr01Ab7LuVWAZReEh1fXAuRBWufZCf",  # CityPersons dataset
         "dataset2": "1I7OjhaomWqd8Quf7o5suwLloRlY0THbp",  # WiderPerson dataset
-        "model1": "1Ayb0msbngys1UHZWySyTYcDoRoOzQABg",    # best model1
-        "model2": "TODO_MODEL2_FILE_ID",                  # best model2
-        "model3": "TODO_MODEL3_FILE_ID"                   # best model3
+        "model1": "1Ayb0msbngys1UHZWySyTYcDoRoOzQABg",    # best_dataset1.pt
+        "model2": "1D2V2GAtLwxuS_rq9yxtPCtoQ5GRpSOdR",    # best_dataset2.pt
+        "model3": "1yU9AGKZI137IvgLxgVOGMCth5Rg-hyVt"     # best_combined.pt
     }
     
     SCRIPT_DIR = Path(__file__).resolve().parent
